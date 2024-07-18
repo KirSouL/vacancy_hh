@@ -11,8 +11,6 @@ def main():
 
     user_request.load_vacancies(user_input)
 
-    print("Добавление вакансий в базу данных")
-
     Connector().add_vacancy()
     interface()
 

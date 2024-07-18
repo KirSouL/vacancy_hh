@@ -6,48 +6,44 @@ from src.Vacancy import WorkVacancy
 class BaseConnector(ABC):
 
     @abstractmethod
-    def create_vacancy_list(self):
+    def create_vacancy_list(self) -> list:
         pass
 
     @abstractmethod
-    def add_vacancy(self):
+    def add_vacancy(self) -> None:
         pass
 
     @abstractmethod
-    def get_info(self, key_name: str, value_name: str | int):
+    def get_info(self, key_name: str, value_name: str | int) -> list:
         pass
 
     @abstractmethod
-    def remove_vacancy(self):
-        pass
-
-    @abstractmethod
-    def _save(self):
+    def delete_vacancy(self) -> None:
         pass
 
 
 class Connector(BaseConnector):
 
-    def __init__(self):
-        self.vacancy_list = []
-        self.finish_list = []
+    def __init__(self) -> None:
+        self._vacancy_list = []
+        self._finish_list = []
 
-    def create_vacancy_list(self):
+    def create_vacancy_list(self) -> list:
         """
-        Функция получения списка вакансий с нужной информацией
+        Метод класса для формирования списка вакансий по новому
         :return: список вакансий после обработки классом WorkVacancy
         """
 
-        with open("../work_to_HH/data/vacancies_base.json", "r", encoding="utf-8") as file:
+        with open("../work_to_HH/data/vacancies.json", "r", encoding="utf-8") as file:
             read_vacancy_file = json.load(file)
             for item in read_vacancy_file:
                 if item["salary"] is None or item["area"] is None:
                     continue
                 else:
-                    self.vacancy_list.append(WorkVacancy(item["name"], item["alternate_url"], item["area"]["name"],
-                                                         item["salary"]["from"], item["salary"]["to"],
-                                                         item["salary"]["currency"], item["snippet"]["requirement"]))
-        return self.vacancy_list
+                    self._vacancy_list.append(WorkVacancy(item["name"], item["alternate_url"], item["area"]["name"],
+                                                          item["salary"]["from"], item["salary"]["to"],
+                                                          item["salary"]["currency"], item["snippet"]["requirement"]))
+        return self._vacancy_list
 
     def add_vacancy(self) -> None:
         vacancy_list = self.create_vacancy_list()
@@ -59,9 +55,15 @@ class Connector(BaseConnector):
                                 "currency": f.salary_currency, "snippet": f.snippet_requirement})
             return json.dump(new_vac, file, indent=4)
 
-    def get_info(self, key_name: str, value_name: str | int):
-        self.add_vacancy()
-
+    def get_info(self, key_name: str, value_name: str | int) -> list:
+        """
+        Метод класс возвращающий информацию по вакансиям по ключевым словам полученным о пользователя
+        :param key_name: наименование ключа в словаре из списка вакансий, по которому
+                         ведется сортировка вакансий
+        :param value_name: значение ключа для словаря, содержащегося в списке вакансий,
+                           получаемый от пользователя. Для осуществления подбора вакансий
+        :return: список отфильтрованных вакансий в соответствии с заданным условием
+        """
         with open("../work_to_HH/data/vacancies_to_work.json", "r", encoding="utf-8") as file:
             top_list = json.load(file)
 
@@ -69,25 +71,17 @@ class Connector(BaseConnector):
 
         for item in top_:
             if value_name == item[key_name]:
-                self.finish_list.append(item)
+                self._finish_list.append(item)
 
-        return self.finish_list
+        return self._finish_list
 
-    def remove_vacancy(self):
-        pass
+    def delete_vacancy(self) -> None:
+        """
+        Метод удаляющий содержимое файлов: базового, с вакансиями полученными с hh.ru;
+        с вакансиями для сортировки.
+        """
+        with open("../work_to_HH/data/vacancies_to_work.json", "w", encoding="utf-8") as _:
+            pass
 
-    def _save(self):
-        pass
-
-
-# one = Connector()
-# print(one.get_info("area", "Тюмень"))
-
-# list_ = one.get_info()
-#
-# def get(list_):
-#     for item in list_:
-#         return item["name"]
-#
-# get(list_)
-# sorted(one.get_info(), key=lambda x: x.name, reverse=False)
+        with open("../work_to_HH/data/vacancies.json", "w", encoding="utf-8") as _:
+            pass

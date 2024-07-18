@@ -2,8 +2,8 @@ from src.Connector import Connector
 from prettytable import PrettyTable
 
 
-def interface():
-
+def interface() -> None:
+    """Функция для работы с пользователем"""
     while True:
         print(
             "Введите какой результат хотите получить:\n"
@@ -31,13 +31,17 @@ def interface():
             return
 
 
-def print_top(*args):
-
-    info_to_user = Connector().get_info(*args)
+def print_top(*args) -> None:
+    """
+    Функция выводящая результат фильтрации топ вакансий по заданным параметрам
+    :param args: набор параметров, на основе которых выдается топ вакансий
+    """
+    info_to_user = Connector()
+    info = info_to_user.get_info(*args)
     user_ = int(input("Введите количество для топа вакансий: "))
     table_console = PrettyTable(["name", "url", "salary_from", "salary_to", "currency", "area", "snippet"])
 
-    for vacancy in info_to_user[:user_]:
+    for vacancy in info[:user_]:
         table_console.add_row([vacancy["name"], vacancy["url"], vacancy["salary_from"], vacancy["salary_to"],
                                vacancy["currency"], vacancy["area"], vacancy["snippet"]])
 

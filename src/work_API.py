@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 
 class BaseHH(ABC):
-    """Класс-конструктор для работы с API"""
+    """Класс-конструктор для работы с API HH"""
     @abstractmethod
     def __init__(self):
         pass
@@ -12,10 +12,10 @@ class BaseHH(ABC):
 
 class Parser(BaseHH):
 
-    def __init__(self, file_worker):
+    def __init__(self, file_worker) -> None:
         self.file_worker = file_worker
 
-    def save_in_file(self, vacancies):
+    def save_in_file(self, vacancies) -> None:
         """
         Метод класса Parser(BaseHH) записывающий в файл *.json всю информацию по вакансиям
         :param vacancies: список вакансий полученных с сайта hh.ru по запросу
@@ -27,14 +27,14 @@ class Parser(BaseHH):
 class HH(Parser):
     """Класс для работы с API HeadHunter"""
 
-    def __init__(self, file_worker):
+    def __init__(self, file_worker) -> None:
         self.url = 'https://api.hh.ru/vacancies'
         self.headers = {'User-Agent': 'HH-User-Agent'}
         self.params = {'text': '', 'page': 0, 'per_page': 100}
         self.vacancies = []
         super().__init__(file_worker)
 
-    def load_vacancies(self, keyword):
+    def load_vacancies(self, keyword) -> None:
         """
         Метод класса HH(Parser), который запрашивает информацию по вакаснсиям на сайте hh.ru
         :param keyword: наименовании запрашиваемой вакансии
@@ -46,27 +46,3 @@ class HH(Parser):
             self.vacancies.extend(vacancies)
             self.params['page'] += 1
         super().save_in_file(self.vacancies)
-
-
-# one = HH("../data/vacancies_base.json")
-# one.load_vacancies("Программист")
-# print(one.vacancies)
-# print(one.vacancies)
-
-# with open("../data/vacancies_base.json", "r", encoding="utf-8") as file:
-#     file_ = json.load(file)
-#     for f in file_:
-#         print(f["area"]["name"])
-
-        # print(f["area"]["name"])
-        # print(f["area"]["id"])
-        # print("\n")
-    # print(file_[12]["snippet"]["requirement"])
-    # print(file_[12]["schedule"]["name"])
-    # print(file_[12]["type"]["name"])
-    # print(file_[10]["area"]["name"])
-    # print(file_[10]["area"]["id"])
-    # print(file_[12]["employment"]["name"])
-    # print(file_[12]["professional_roles"][0]["name"])
-    # print(file_[12]["snippet"]["responsibility"])
-
