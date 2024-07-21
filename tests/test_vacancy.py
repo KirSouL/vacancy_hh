@@ -1,5 +1,5 @@
 import pytest
-from src.Vacancy import WorkVacancy
+from src.vacancy import WorkVacancy
 
 
 def test_one__le__():
